@@ -9,6 +9,10 @@ from threading import Thread
 from os import system
 import colorama
 import re
+from memory import Memory
+
+ENTRIES = 20
+CONST_DATA = {"Language": "Türkçe"}
 
 emoji_pattern = re.compile("[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF"
                             "\U0001F680-\U0001F6FF\U0001F700-\U0001F77F"
@@ -52,27 +56,44 @@ def main():
         message = input()
 
         try:
+            memory = Memory("memory.json")
+            history = memory.load()
+            newHistory = []
+
+            for entry in history["History"][-ENTRIES:]:
+                if "user" in entry:
+                    newHistory.append({"role": "user", "content": entry["user"]})
+                if "assistant" in entry:
+                    newHistory.append({"role": "assistant", "content": entry["assistant"]})
+
+                newHistory.append({"role": "user", "content": message})
+
+                for key, value in CONST_DATA.items():
+                    newHistory.append({"role": "system", "content": f"{key}: {value}"})
+
             Thread(target=load).start()
 
             response: ollama.ChatResponse = ollama.chat(
                 model="gemma2",
-                messages=[{"role": "user", "content": message}],
+                messages=newHistory,
             )
 
+            response = response.message.content
+            memory.save(message, response)
+
             done = True 
-            
 
             system("clear")
             print()
-            response = response.message.content
 
             tts_response = re.sub(r"\*", "", emoji_pattern.sub("", response))
 
             print(colorama.Fore.GREEN + response, end="", flush=True)
             print()
 
-            gTTS(text=tts_response,lang="tr",slow=False).save("sounds/tts.mp3")
-            run(["cvlc", "--play-and-exit", "sounds/tts.mp3"])
+            if tts_response.strip():
+                gTTS(text=tts_response,lang="tr",slow=False).save("sounds/tts.mp3")
+                run(["cvlc", "--play-and-exit", "sounds/tts.mp3"])
 
         except ollama.ResponseError as e:
             if e.status_code == 404:

@@ -16,7 +16,6 @@ class Memory:
                 f.seek(0)
                 json.dump(data, f, indent=4)
                 f.truncate()
-
         except FileNotFoundError:
             with open(self.m_json, 'w') as f:
                 json.dump({"History": []}, f, indent=4)
@@ -29,24 +28,21 @@ class Memory:
                 json.dump({"History": []}, f)
                 f.truncate()
                 t = {"History": []}
-
+            
             if "History" not in t:
                 t["History"] = []
                 f.seek(0)
                 json.dump(t, f, indent=4)
                 f.truncate()
 
-def generateData(message: str, file: str, entries: int = 20):
-    memory = Memory(file)
-    history = memory.load()
-    newHistory = []
+    def load(self):
+        with open(self.m_json, "r") as f:
+            return json.load(f)
 
-    for entry in history["History"][entries:]:
-        if "user" in entry:
-            newHistory.append({"role": "user", "content": entry["user"]})
-        if "assistant" in entry:
-            newHistory.append({"role": "assistant", "content": entry["assistant"]})
-
-        newHistory.append({"role": "user", "content": message})
-
-    return newHistory
+    def save(self, input_text, output_text):
+        with open(self.m_json, "r+") as f:
+            data = json.load(f)
+            data["History"].append({"user": input_text, "assistant": output_text})
+            f.seek(0)
+            json.dump(data, f, indent=4)
+            f.truncate()
