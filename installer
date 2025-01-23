@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sudo apt-get upgrade
+sudo apt-get update
+
+if ! command -v python3 &> /dev/null
+then
+    echo "Python3 yükleniyor..."
+    sudo apt-get python3-full
+    echo "Python3 yüklendi"
+fi
+
