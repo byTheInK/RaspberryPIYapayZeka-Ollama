@@ -1,7 +1,12 @@
 #!/bin/bash
 
+cd "$(dirname "$0")"
+
 sudo apt-get upgrade
 sudo apt-get update
+sudo chmod +x ./yzpi
+sudo chown -R $USER:$USER .
+sudo chmod -R u+w .
 
 if ! command -v python3 &> /dev/null
 then
@@ -10,3 +15,28 @@ then
     echo "Python3 yüklendi"
 fi
 
+python3 -m venv venv
+source venv/bin/activate
+venv/bin/pip3 install -r requirements.txt
+deactivate
+
+sudo cp ./yzpi /usr/bin/yzpi
+
+if ! command -v python3 &> /dev/null
+then
+    echo "Ollama yükleniyor..."
+    curl -fsSL https://ollama.com/install.sh | sh
+    
+    read -p "Deepseek-v3 modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
+    
+    sudo systemctl enable ollama
+    sudo systemctl start ollama
+    
+    if [[ "$tercih" == "E" || "$tercih" == "e" ]]
+    then
+        echo "Deepseek-v3 modeli indiriliyor..."
+        ollama pull deepseek-v3
+    else
+        echo "Deepseek-v3 modeli indirilmedi."
+    fi
+fi
