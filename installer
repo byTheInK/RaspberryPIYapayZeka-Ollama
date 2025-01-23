@@ -27,16 +27,16 @@ then
     echo "Ollama yükleniyor..."
     curl -fsSL https://ollama.com/install.sh | sh
     
-    read -p "Deepseek-v3 modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
+    read -p "Gemma2 modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
     
     sudo systemctl enable ollama
     sudo systemctl start ollama
     
     if [[ "$tercih" == "E" || "$tercih" == "e" ]]
     then
-        echo "Deepseek-v3 modeli indiriliyor..."
-        ollama pull deepseek-v3
+        echo "Gemma2 modeli indiriliyor..."
+        ollama pull gemma2
     else
-        echo "Deepseek-v3 modeli indirilmedi."
+        echo "Gemma2 modeli indirilmedi."
     fi
 fi
