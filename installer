@@ -8,9 +8,9 @@ sudo chmod +x ./yzpi
 sudo chown -R $USER:$USER .
 sudo chmod -R u+w .
 
-sudo apt-get install alsa-utils espeak python3.11 python3.11-venv
+sudo apt-get install alsa-utils espeak python-full ffmprg
 
-python3.11 -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 venv/bin/pip3 install -U pip wheel setuptools
 venv/bin/pip3 install -r requirements.txt
