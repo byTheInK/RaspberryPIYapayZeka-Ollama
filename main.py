@@ -22,6 +22,38 @@ emoji_pattern = re.compile("[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF"
 
 done = False
     
+def generate(message):
+    global done
+
+    memory = Memory("memory.json")
+    history = memory.load()
+    newHistory = []
+
+    for entry in history["History"][-ENTRIES:]:
+        if "user" in entry:
+            newHistory.append({"role": "user", "content": entry["user"]})
+        if "assistant" in entry:
+            newHistory.append({"role": "assistant", "content": entry["assistant"]})
+
+        newHistory.append({"role": "user", "content": message})
+
+        for key, value in CONST_DATA.items():
+            newHistory.append({"role": "system", "content": f"{key}: {value}"})
+
+    done = False
+    Thread(target=load).start()
+
+    response: ollama.ChatResponse = ollama.chat(
+        model="gemma2",
+        messages=newHistory,
+    )
+
+    response = response.message.content
+    memory.save(message, response)
+
+    done = True
+    return response
+
 def load():
     global done
     print("Yükleniyor: ", end="")
@@ -49,39 +81,11 @@ def pull(model="gemma2"):
     return 
 
 def main():
-    global done
-
     while True:
-        done = False
-        message = input()
+        message = input(">> ")
 
         try:
-            memory = Memory("memory.json")
-            history = memory.load()
-            newHistory = []
-
-            for entry in history["History"][-ENTRIES:]:
-                if "user" in entry:
-                    newHistory.append({"role": "user", "content": entry["user"]})
-                if "assistant" in entry:
-                    newHistory.append({"role": "assistant", "content": entry["assistant"]})
-
-                newHistory.append({"role": "user", "content": message})
-
-                for key, value in CONST_DATA.items():
-                    newHistory.append({"role": "system", "content": f"{key}: {value}"})
-
-            Thread(target=load).start()
-
-            response: ollama.ChatResponse = ollama.chat(
-                model="gemma2",
-                messages=newHistory,
-            )
-
-            response = response.message.content
-            memory.save(message, response)
-
-            done = True 
+            response = generate(message)
 
             system("clear")
             print()
@@ -99,6 +103,7 @@ def main():
             if e.status_code == 404:
                 pull()
                 return
+
         except Exception as e:
             print("Bir hata oluştu: \n", e)
 
