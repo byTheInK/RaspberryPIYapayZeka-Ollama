@@ -7,6 +7,7 @@ from time import sleep
 from itertools import cycle
 from threading import Thread
 from os import system
+import colorama
 
 done = False
     
@@ -57,7 +58,7 @@ def main():
             print()
             response = response.message.content
                 
-            print(response, end="", flush=True)
+            print(colorama.Fore.GREEN + response, end="", flush=True)
             print()
 
             gTTS(text=response,lang="tr",slow=False).save("sounds/tts.mp3")
@@ -71,4 +72,5 @@ def main():
             print("Bir hata oluştu: \n", e)
 
 if __name__ == "__main__":
+    colorama.init(autoreset=True)
     main()

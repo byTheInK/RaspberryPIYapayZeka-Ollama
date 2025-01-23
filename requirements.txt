@@ -1,6 +1,4 @@
 ollama
 vosk
-TTS
-sounddevice
-numpy
 gtts
+colorama
