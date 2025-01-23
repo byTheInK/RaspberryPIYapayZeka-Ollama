@@ -60,6 +60,7 @@ def main():
             )
 
             done = True 
+            
 
             system("clear")
             print()

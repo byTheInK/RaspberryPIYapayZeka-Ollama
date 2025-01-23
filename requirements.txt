@@ -2,3 +2,4 @@ ollama
 vosk
 gtts
 colorama
+pyaudio
