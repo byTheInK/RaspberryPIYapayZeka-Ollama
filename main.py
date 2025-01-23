@@ -1,5 +1,5 @@
 import ollama
-import vosk
+from vosk import Model, KaldiRecognizer
 from gtts import gTTS
 from subprocess import run
 from sys import stdout as terminal

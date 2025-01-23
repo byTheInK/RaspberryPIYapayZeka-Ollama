@@ -8,7 +8,7 @@ sudo chmod +x ./yzpi
 sudo chown -R $USER:$USER .
 sudo chmod -R u+w .
 
-sudo apt-get install alsa-utils espeak python-full ffmprg
+sudo apt-get install alsa-utils espeak python-full ffmpeg unzip 
 
 python3 -m venv venv
 source venv/bin/activate
@@ -35,6 +35,25 @@ then
     else
         echo "Gemma2 modeli indirilmedi."
     fi
+fi
+
+read -p "Vosk Türkçe modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
+
+if [[ "$tercih" == "E" || "$tercih" == "e" ]]
+then
+    echo "https://alphacephei.com/vosk/models/vosk-model-small-tr-0.3.zip dosyası indiriliyor"
+    sleep 1
+
+    wget https://alphacephei.com/vosk/models/vosk-model-small-tr-0.3.zip
+    echo "Vosk indirildi"
+
+    unzip vosk-model-small-tr-0.3.zip
+    echo "Vosk arşivden çıkarıldı"
+
+    mv vosk-model-small-tr-0.3 vosk-tr
+    rm -f vosk-model-small-tr-0.3.zip 
+
+    echo "Vosk kuruldu"
 fi
 
 echo "Kurulum tamamlandı

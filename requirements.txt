@@ -3,3 +3,4 @@ vosk
 gtts
 colorama
 pyaudio
+sounddevice
