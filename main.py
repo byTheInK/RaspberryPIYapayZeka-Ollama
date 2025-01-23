@@ -9,7 +9,10 @@ from threading import Thread
 from os import system
 import colorama
 import re
+import wave
 from memory import Memory
+from os.path import exists
+from json import loads
 
 ENTRIES = 20
 CONST_DATA = {"Language": "Türkçe"}
@@ -21,7 +24,25 @@ emoji_pattern = re.compile("[\U0001F600-\U0001F64F\U0001F300-\U0001F5FF"
                             "\U0001FA70-\U0001FAFF\U00002700-\U000027BF]+")
 
 done = False
-    
+
+def speechToText():
+    if exists("vosk-model-small-tr-0.3"):
+        model_path = "vosk-model-small-tr-0.3"
+    else:
+        model_path = "vosk-tr"
+
+    model = Model(model_path)
+    recognizer = KaldiRecognizer(model, 16000)
+
+    with wave.open("sounds/recording.wav", "rb") as wf:
+        while True:
+            data = wf.readframes(4000)
+            if len(data) == 0:
+                break
+            if recognizer.AcceptWaveform(data):
+                result = recognizer.Result()
+                print(loads(result)["text"])
+
 def generate(message):
     global done
 
