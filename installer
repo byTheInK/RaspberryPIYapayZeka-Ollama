@@ -8,15 +8,11 @@ sudo chmod +x ./yzpi
 sudo chown -R $USER:$USER .
 sudo chmod -R u+w .
 
-if ! command -v python3 &> /dev/null
-then
-    echo "Python3 yükleniyor..."
-    sudo apt-get python3-full
-    echo "Python3 yüklendi"
-fi
+sudo apt-get install alsa-utils espeak python3.11 python3.11-venv
 
-python3 -m venv venv
+python3.11 -m venv venv
 source venv/bin/activate
+venv/bin/pip3 install -U pip wheel setuptools
 venv/bin/pip3 install -r requirements.txt
 deactivate
 
@@ -40,3 +36,5 @@ then
         echo "Gemma2 modeli indirilmedi."
     fi
 fi
+
+echo "Kurulum tamamlandı

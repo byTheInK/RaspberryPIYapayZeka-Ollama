@@ -1,5 +1,8 @@
 import ollama
 import vosk
+from gtts import gTTS
+from subprocess import run
+import re
 
 def pull(model="gemma2"):
     print(f"{model.capitalize()} modeli bulunamadı")
@@ -18,21 +21,21 @@ def main():
         message = input()
 
         try:
-            for chunk in ollama.chat(
+            response: ollama.ChatResponse = ollama.chat(
                 model="gemma2",
                 messages=[{"role": "user", "content": message}],
-                stream=True,
-                ):
+                )
 
-                content = chunk["message"]["content"]
+            response = response.message.content
                 
-                print(content, end="", flush=True)
-        
+            print(response, end="", flush=True)
+
+            gTTS(text=response,lang="tr",slow=False).save("sounds/tts.mp3")
+            run(["cvlc", "--play-and-exit", "sounds/tts.mp3"])
+
         except ollama.ResponseError as e:
             if e.status_code == 404:
                 pull("gemma2")
-
-
 
 if __name__ == "__main__":
     main()

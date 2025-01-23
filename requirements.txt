@@ -1,3 +1,6 @@
 ollama
 vosk
-pyttsx3
+TTS
+sounddevice
+numpy
+gtts
