@@ -13,6 +13,7 @@ import wave
 from memory import Memory
 from os.path import exists
 from json import loads
+from voice import Recorder
 
 ENTRIES = 20
 CONST_DATA = {"Language": "Türkçe"}
@@ -41,7 +42,7 @@ def speechToText():
                 break
             if recognizer.AcceptWaveform(data):
                 result = recognizer.Result()
-                print(loads(result)["text"])
+                return loads(result)["text"]
 
 def generate(message):
     global done
@@ -103,7 +104,10 @@ def pull(model="gemma2"):
 
 def main():
     while True:
-        message = input(">> ")
+        print("Ses bekleniyor...")
+        Recorder().listen()
+
+        message = speechToText()
 
         try:
             response = generate(message)

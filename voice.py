@@ -30,6 +30,7 @@ class Recorder:
                                   input=True,
                                   output=True,
                                   frames_per_buffer=ParçaDeğeri)
+        self.done = False
 
     def record(self):
         print('Kayıt başladı')
@@ -55,13 +56,10 @@ class Recorder:
         wf.setframerate(Frekans)
         wf.writeframes(recording)
         wf.close()
-        print("Ses bekleniyor...")
-
-
+        self.done = True
 
     def listen(self):
-        print('Ses bekleniyor')
-        while True:
+        while not self.done:
             input = self.stream.read(ParçaDeğeri)
             rms_val = self.rms(input)
             if rms_val > Hassasiyet:
