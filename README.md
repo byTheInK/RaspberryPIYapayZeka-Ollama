@@ -42,3 +42,13 @@ sudo sh installer
 ```bash
 sudo rm -rf  ~/RaspberryPIYapayZeka-Ollama
 ```
+
+# Ayarlar
+
+Ayarlara girmek için istediğiniz bir metin düzenleyicisi seçin(GNU Nano, Vim, Kate, Visual Studio Code, ...) ve `"~/RaspberryPIYapayZeka-Ollama/ayarlar.py"` dosyasını düzenleyin.
+
+**Örnek:**
+
+```bash
+nano ~/RaspberryPIYapayZeka-Ollama/ayarlar.py
+```
