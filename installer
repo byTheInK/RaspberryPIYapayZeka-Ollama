@@ -56,4 +56,4 @@ then
     echo "Vosk kuruldu"
 fi
 
-echo "Kurulum tamamlandı
+echo "Kurulum tamamlandı"

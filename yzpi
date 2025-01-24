@@ -1,4 +1,4 @@
 #!/bin/bash
 cd ~/RaspberryPIYapayZeka-Ollama
 source ~/RaspberryPIYapayZeka-Ollama/venv/bin/activate
-python3 ~/RaspberryPIYapayZeka-Ollama/venv/bin/python3 ~/RaspberryPIYapayZeka-Ollama/main.py
+~/RaspberryPIYapayZeka-Ollama/venv/bin/python3 ~/RaspberryPIYapayZeka-Ollama/main.py
