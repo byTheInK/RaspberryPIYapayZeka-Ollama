@@ -1,8 +1,8 @@
 /venv/
 /vosk-model-small-tr-0.3/
 /vosk-tr/
-/sounds/recording.wav
-/sounds/tts.mp3
+sounds/recording.wav
+sounds/tts.mp3
 *.pyc
 __pycache__/
 __pycache__/
