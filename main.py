@@ -49,31 +49,30 @@ def generate(message):
 
     memory = Memory("memory.json")
     history = memory.load()
-    newHistory = []
+    new_history = []
 
-    for entry in history["History"][-ENTRIES:]:
+    for entry in history.get("History", [])[-ENTRIES:]:
         if "user" in entry:
-            newHistory.append({"role": "user", "content": entry["user"]})
+            new_history.append({"role": "user", "content": entry["user"]})
         if "assistant" in entry:
-            newHistory.append({"role": "assistant", "content": entry["assistant"]})
+            new_history.append({"role": "assistant", "content": entry["assistant"]})
 
-        newHistory.append({"role": "user", "content": message})
+    new_history.append({"role": "user", "content": message})
 
-        for key, value in CONST_DATA.items():
-            newHistory.append({"role": "system", "content": f"{key}: {value}"})
+    for key, value in CONST_DATA.items():
+        new_history.append({"role": "system", "content": f"{key}: {value}"})
 
     done = False
     Thread(target=load).start()
 
-    response: ollama.ChatResponse = ollama.chat(
+    response = ollama.chat(
         model="gemma2",
-        messages=newHistory,
-    )
+        messages=new_history,
+    ).message.content
 
-    response = response.message.content
     memory.save(message, response)
-
     done = True
+
     return response
 
 def load():

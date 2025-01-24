@@ -2,34 +2,31 @@
 
 cd "$(dirname "$0")"
 
-sudo apt-get upgrade
 sudo apt-get update
+sudo apt-get upgrade -y
+
 sudo chmod +x ./yzpi
-sudo chown -R $USER:$USER .
+sudo chown -R "$USER:$USER" .
 sudo chmod -R u+w .
 
-sudo apt-get install alsa-utils espeak python-full ffmpeg unzip 
+sudo apt-get install -y alsa-utils espeak python3-venv python3-pip ffmpeg unzip
 
 python3 -m venv venv
 source venv/bin/activate
-venv/bin/pip3 install -U pip wheel setuptools
-venv/bin/pip3 install -r requirements.txt
+pip install -U pip wheel setuptools
+pip install -r requirements.txt
 deactivate
 
 sudo cp ./yzpi /usr/bin/yzpi
 
-if ! command -v python3 &> /dev/null
-then
+if ! command -v python3 &> /dev/null; then
     echo "Ollama yükleniyor..."
     curl -fsSL https://ollama.com/install.sh | sh
-    
-    read -p "Gemma2 modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
-    
     sudo systemctl enable ollama
     sudo systemctl start ollama
-    
-    if [[ "$tercih" == "E" || "$tercih" == "e" ]]
-    then
+
+    read -p "Gemma2 modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
+    if [[ "$tercih" =~ ^[Ee]$ ]]; then
         echo "Gemma2 modeli indiriliyor..."
         ollama pull gemma2
     else
@@ -38,22 +35,15 @@ then
 fi
 
 read -p "Vosk Türkçe modelini indirmek istiyor musunuz? ([E]vet/[H]ayır): " tercih
-
-if [[ "$tercih" == "E" || "$tercih" == "e" ]]
-then
-    echo "https://alphacephei.com/vosk/models/vosk-model-small-tr-0.3.zip dosyası indiriliyor"
-    sleep 1
-
+if [[ "$tercih" =~ ^[Ee]$ ]]; then
+    echo "Vosk Türkçe modeli indiriliyor..."
     wget https://alphacephei.com/vosk/models/vosk-model-small-tr-0.3.zip
-    echo "Vosk indirildi"
+    echo "Vosk indirildi."
 
     unzip vosk-model-small-tr-0.3.zip
-    echo "Vosk arşivden çıkarıldı"
-
     mv vosk-model-small-tr-0.3 vosk-tr
-    rm -f vosk-model-small-tr-0.3.zip 
-
-    echo "Vosk kuruldu"
+    rm -f vosk-model-small-tr-0.3.zip
+    echo "Vosk modeli kuruldu."
 fi
 
-echo "Kurulum tamamlandı"
+echo "Kurulum tamamlandı."
