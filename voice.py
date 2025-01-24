@@ -5,31 +5,18 @@ import math
 import struct
 import wave
 import time
-import os
-
-Threshold = 10
-
-SHORT_NORMALIZE = (1.0/32768.0)
-chunk = 1024
-FORMAT = pyaudio.paInt16
-CHANNELS = 1
-RATE = 16000
-swidth = 2
-
-TIMEOUT_LENGTH = 5
-
-f_name_directory = "sounds"
+from ayarlar import *
 
 class Recorder:
     @staticmethod
     def rms(frame):
-        count = len(frame) / swidth
+        count = len(frame) / Genişlik
         format = "%dh" % (count)
         shorts = struct.unpack(format, frame)
 
         sum_squares = 0.0
         for sample in shorts:
-            n = sample * SHORT_NORMALIZE
+            n = sample * Normalleştirme
             sum_squares += n * n
         rms = math.pow(sum_squares / count, 0.5)
 
@@ -37,46 +24,47 @@ class Recorder:
 
     def __init__(self):
         self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format=FORMAT,
-                                  channels=CHANNELS,
-                                  rate=RATE,
+        self.stream = self.p.open(format=Biçim,
+                                  channels=KanalSayısı,
+                                  rate=Frekans,
                                   input=True,
                                   output=True,
-                                  frames_per_buffer=chunk)
+                                  frames_per_buffer=ParçaDeğeri)
 
     def record(self):
         print('Kayıt başladı')
         rec = []
         current = time.time()
-        end = time.time() + TIMEOUT_LENGTH
+        end = time.time() + Normalleştirme
 
         while current <= end:
 
-            data = self.stream.read(chunk)
-            if self.rms(data) >= Threshold: end = time.time() + TIMEOUT_LENGTH
+            data = self.stream.read(ParçaDeğeri)
+            if self.rms(data) >= Hassasiyet: end = time.time() + SessizlikSüresi
 
             current = time.time()
             rec.append(data)
         self.write(b''.join(rec))
 
     def write(self, recording):
-        filename = os.path.join(f_name_directory, "recording.wav")
+        filename = "sounds/recording.wav"
 
         wf = wave.open(filename, 'wb')
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(self.p.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
+        wf.setnchannels(KanalSayısı)
+        wf.setsampwidth(self.p.get_sample_size(Biçim))
+        wf.setframerate(Frekans)
         wf.writeframes(recording)
         wf.close()
+        print("Ses bekleniyor...")
 
 
 
     def listen(self):
-        print('Listening beginning')
+        print('Ses bekleniyor')
         while True:
-            input = self.stream.read(chunk)
+            input = self.stream.read(ParçaDeğeri)
             rms_val = self.rms(input)
-            if rms_val > Threshold:
+            if rms_val > Hassasiyet:
                 self.record()
 
 if __name__ == "__main__":
